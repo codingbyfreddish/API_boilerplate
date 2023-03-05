@@ -6,9 +6,10 @@ document.getElementById("status").addEventListener("click", e => getStatus(e));
 document.getElementById("submit").addEventListener("click", e => postForm(e));
 
 async function postForm(e) {
+    
     const form = new FormData(document.getElementById("checksform"));
 
-    const response = fetch(API_URL, {
+    const response = await fetch(API_URL, {
         method: "POST",
         headers: {
         "Authorization": API_KEY,
@@ -16,16 +17,19 @@ async function postForm(e) {
         body: form,
     });
 
-    const data = await (await response).json();
+    const data = await response.json();
 
     if (response.ok) {
         displayErrors(data);
     } else {
         throw new Error(data.error);
     }
+
 }
 
 function displayErrors(data) {
+
+    let results = "";
 
     let heading = `JSHint Results for ${data.file}`;
 
@@ -40,12 +44,13 @@ function displayErrors(data) {
         }
     }
 
-    document.getElementById("resultsModalTitle").innertext = heading;
-    document.getElementById("results-content").innerText = results;
+    document.getElementById("resultsModalTitle").innerText = heading;
+    document.getElementById("results-content").innerHTML = results;
     resultsModal.show();
 }
 
 async function getStatus(e) {
+    
     const queryString = `${API_URL}?api_key=${API_KEY}`;
 
     const response = await fetch(queryString);
